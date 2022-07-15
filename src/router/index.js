@@ -8,8 +8,9 @@ const routes = [
   {
     path: '/',
     component: () => import('@/views/Layout'),
+    redirect: '/ ',
     children: [
-      { path: '/', component: () => import('@/views/Home') },
+      { path: '/ ', component: () => import('@/views/Home') },
       { path: '/video', component: () => import('@/views/Video') },
       { path: '/qa', component: () => import('@/views/QA') },
       { path: '/My', component: () => import('@/views/My') }
