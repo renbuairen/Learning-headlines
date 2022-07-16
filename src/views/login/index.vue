@@ -5,7 +5,7 @@
       class="navBar"
       title="登录"
       left-arrow
-      @click-right="backToPrePage"
+      @click-left="backToPrePage"
     >
       <template #left>
         <van-icon name="cross" />
@@ -126,7 +126,7 @@ export default {
         this.$toast.success('登录成功')
 
         // 跳转
-        this.$router.push('/profile')
+        this.$router.push('/My')
       } catch (error) {
         console.log(error)
         // 拿到状态码
