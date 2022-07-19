@@ -10,7 +10,6 @@ const request = axios.create({
 // 每一次请求都会执行的函数
 request.interceptors.request.use(
     (config) => {
-        console.log(config)
         const token = store.state.user.token
 
         if (token) {
