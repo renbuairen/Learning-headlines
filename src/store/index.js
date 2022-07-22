@@ -7,7 +7,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
 
   state: {
-    user: getToken() || {}
+    user: getToken() || {},
+    result: []
   },
 
   getters: {
@@ -21,6 +22,7 @@ export default new Vuex.Store({
       // token放在本地存储
       setToken(payload)
     }
+
   },
 
   actions: {

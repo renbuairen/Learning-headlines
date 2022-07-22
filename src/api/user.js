@@ -27,3 +27,19 @@ export const getUserInfo = () => {
 
     })
 }
+
+export const focusUserId = (target) => {
+    return request({
+        url: '/v1_0/user/followings',
+        method: 'POST',
+        data: { target }
+
+    })
+}
+
+export const delUserId = (target) => {
+    return request({
+        url: `/v1_0/user/followings/${target}`,
+        method: 'DELETE'
+    })
+}

@@ -5,6 +5,7 @@
       v-if="articleInfo.cover.type === 0"
       :title="articleInfo.title"
       :label="articleDesc"
+      @click="articleInfoTo(articleInfo.art_id)"
     />
 
     <!--演染一张图片-->
@@ -12,6 +13,7 @@
       v-if="articleInfo.cover.type === 1"
       :title="articleInfo.title"
       :label="articleDesc"
+      @click="articleInfoTo(articleInfo.art_id)"
     >
       <van-image
         width="3rem"
@@ -20,7 +22,11 @@
       />
     </van-cell>
     <!--渲染三张图片-->
-    <van-cell v-if="articleInfo.cover.type === 3" :title="articleInfo.title">
+    <van-cell
+      v-if="articleInfo.cover.type === 3"
+      :title="articleInfo.title"
+      @click="articleInfoTo(articleInfo.art_id)"
+    >
       <template #label>
         <div>
           <van-image
@@ -51,6 +57,12 @@ export default {
     articleDesc() {
       const relativeTime = dayjs(this.articleInfo.pubdate).fromNow()
       return `${this.articleInfo.aut_name} ${this.articleInfo.comm_count}评论 ${relativeTime}`
+    }
+  },
+  methods: {
+    articleInfoTo(val) {
+      console.log(val)
+      this.$router.push(`/detail/${val}`)
     }
   }
 }
