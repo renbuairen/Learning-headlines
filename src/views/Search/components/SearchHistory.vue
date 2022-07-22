@@ -19,6 +19,7 @@
       v-for="(item, index) in this.$parent.history"
       :key="index"
       :title="item"
+      @click="textFn(item)"
     >
       <template #right-icon v-if="isShow">
         <van-icon
@@ -47,6 +48,9 @@ export default {
     },
     clearHistory() {
       this.$parent.history = []
+    },
+    textFn(val) {
+      this.$emit('textKey', val)
     }
   }
 }

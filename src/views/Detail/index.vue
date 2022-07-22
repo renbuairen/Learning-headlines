@@ -49,7 +49,7 @@
       <section class="markdown-body" v-html="obj.content"></section>
       <van-divider style="margin: 16px 0px">正文结束</van-divider>
     </main>
-    <Comment />
+    <Comment :obj="obj" />
   </div>
 </template>
 

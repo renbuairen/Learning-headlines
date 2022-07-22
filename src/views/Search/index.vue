@@ -21,6 +21,7 @@
       :is="componentName"
       :keywords="keywords"
       :list="list"
+      @textKey="textKeyFn"
     ></component>
   </div>
 </template>
@@ -54,10 +55,14 @@ export default {
     }
   },
   methods: {
-    onSearch() {
+    async onSearch() {
       this.isShowSearchResult = true
 
-      if (!this.history.includes(this.keywords)) {
+      this.list = []
+      if (
+        this.keywords.trim() !== '' &&
+        !this.history.includes(this.keywords)
+      ) {
         this.history.unshift(this.keywords)
       }
     },
@@ -66,6 +71,10 @@ export default {
     },
     visibleSearchSuggestion() {
       this.isShowSearchResult = false
+    },
+    textKeyFn(val) {
+      this.keywords = val
+      this.onSearch()
     }
   },
   watch: {

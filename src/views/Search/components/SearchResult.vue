@@ -33,6 +33,7 @@ export default {
       default: () => []
     }
   },
+
   methods: {
     async onLoad() {
       this.page++
@@ -41,13 +42,14 @@ export default {
         this.page,
         this.per_page
       )
+
       this.$parent.list.push(...data.data.results)
 
       // 加载状态结束
       this.loading = false
 
       // 数据全部加载完成
-      if (data.data.results < 10) {
+      if (data.data.results < this.per_page) {
         this.finished = true
       }
     }
