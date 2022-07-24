@@ -11,6 +11,7 @@ import '@/assets/fonts/iconfont.css'
 // 引入flexble
 import 'amfe-flexible/index.min.js'
 
+// 全局注册
 Vue.use(Vant)
 
 Vue.config.productionTip = false

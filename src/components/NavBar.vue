@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="bigBox">
     <van-nav-bar
       :title="this.$route.meta.title"
       left-arrow
@@ -19,6 +19,13 @@ export default {
 </script>
 
 <style scoped lang="less">
+.bigBox {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+}
 /deep/.van-nav-bar {
   background-color: #3296fa;
 }

@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <NavBar />
+  <div v-if="obj.content">
+    <div>
+      <NavBar />
+    </div>
     <!-- 标题 -->
     <h5>{{ obj.title }}</h5>
 
@@ -46,8 +48,20 @@
           </template>
         </van-cell>
       </header>
-      <section class="markdown-body" v-html="obj.content"></section>
+      <section ref="imgs" class="markdown-body" v-html="obj.content"></section>
       <van-divider style="margin: 16px 0px">正文结束</van-divider>
+      <!-- 评论 -->
+      <van-list
+        @load="loadNextPage"
+        offset="400"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        :error.sync="error"
+        error-text="出错了,请重新加载!"
+      >
+        <CommentCard :commentObj="commentObj" />
+      </van-list>
     </main>
     <Comment :obj="obj" />
   </div>
@@ -56,22 +70,49 @@
 <script>
 import '@/assets/github-markdown.css'
 import dayjs from '@/utils/dayjs'
-import { getArticleInfo, focusUserId, delUserId } from '@/api'
+import { getArticleInfo, focusUserId, delUserId, getComments } from '@/api'
 import NavBar from '@/components/NavBar.vue'
 import Comment from '@/components/Comment.vue'
+import CommentCard from '@/components/CommentCard.vue'
+import { ImagePreview } from 'vant'
 export default {
   data() {
     return {
       obj: {},
-      isLoading: false
+      isLoading: false,
+      commentObj: {},
+      loading: false,
+      finished: false,
+      error: false,
+      page: '',
+      endPage: '',
+      timer: 0
     }
   },
   components: {
     NavBar,
-    Comment
+    Comment,
+    CommentCard
   },
   async created() {
-    this.getArticleInfo()
+    await this.getArticleInfo()
+
+    await this.getComments()
+
+    this.$nextTick(() => {
+      const images = []
+      const arr = this.$refs.imgs.querySelectorAll('img')
+
+      arr.forEach((item, index) => {
+        images.push(item.currentSrc)
+        item.onclick = function () {
+          ImagePreview({
+            images,
+            startPosition: index
+          })
+        }
+      })
+    })
   },
   computed: {
     relativeTime() {
@@ -97,6 +138,37 @@ export default {
       // this.getArticleInfo()
       this.obj.is_followed = !this.obj.is_followed
       this.isLoading = false
+    },
+    async getComments() {
+      const { data } = await getComments('a', this.$route.params.art_id)
+      this.commentObj = data.data
+      this.page = data.data.last_id
+      this.endPage = data.data.end_id
+      console.log(this.commentObj)
+    },
+    async loadNextPage() {
+      try {
+        if (this.page !== this.endPage || this.timer !== 0) {
+          const { data } = await getComments(
+            'a',
+            this.$route.params.art_id,
+            this.page
+          )
+          // 没有数据了
+          if (data.data.end_id === data.data.last_id) this.finished = true
+
+          this.commentObj.results.push(...data.data.results)
+
+          // 更新页数
+          this.page = data.data.last_id
+        }
+        this.timer++
+      } catch (err) {
+        this.error = true
+      } finally {
+        // 史新加载状态
+        this.loading = false
+      }
     }
   }
 }
@@ -113,7 +185,7 @@ export default {
 }
 main {
   padding: 0 32px;
-  margin-bottom: 90px;
+  margin-bottom: 100px;
 
   header {
     .van-cell__title {

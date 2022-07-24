@@ -4,7 +4,10 @@
     <div class="commentBar">
       <van-goods-action>
         <van-goods-action-button text="写评论" @click="showPopup" />
-        <van-goods-action-icon icon="comment-o" badge="0" />
+        <van-goods-action-icon
+          icon="comment-o"
+          :badge="$parent.commentObj.total_count"
+        />
         <van-goods-action-icon
           v-if="obj.is_collected"
           icon="star"
@@ -44,7 +47,9 @@
           placeholder="请输入留言"
           show-word-limit
         />
-        <div class="boxBottom" style="font-size: 14px">发布</div>
+        <div class="boxBottom" style="font-size: 14px" @click="releaseComment">
+          发布
+        </div>
       </van-popup>
     </div>
 
@@ -61,12 +66,18 @@
 </template>
 
 <script>
-import { articleLike, delLike, articleCollect, delCollect } from '@/api'
+import {
+  articleLike,
+  delLike,
+  articleCollect,
+  delCollect,
+  releaseComment
+} from '@/api'
 export default {
   props: {
     obj: {
       type: Object,
-      require: true,
+      required: true,
       default: () => ({})
     }
   },
@@ -110,6 +121,35 @@ export default {
     async delCollect(artId) {
       await delCollect(artId)
       this.$parent.obj.is_collected = false
+    },
+    async releaseComment() {
+      this.$toast.loading({
+        message: '加载中...',
+        // loading时,禁止点击页面
+        forbidClick: true
+      })
+      try {
+        const { data } = await releaseComment(this.obj.art_id, this.message)
+        console.log(data)
+        this.show = false
+        this.message = ''
+
+        this.$parent.commentObj.results.unshift(data.data.new_obj)
+        this.$parent.commentObj.total_count++
+
+        this.$toast.success('发布成功')
+      } catch (error) {
+        console.log(error)
+        const status = error.response.status
+
+        let message = '发布失败'
+
+        if (status === 401 || status === 403) {
+          message = error.response.data.message
+        }
+
+        this.$toast.fail(message)
+      }
     }
   }
 }
